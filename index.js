@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const { connect } = require('./services/connection');
+const { connect, disconnect } = require('./services/connection');
 
 exports.handler = async (event) => {
     
@@ -10,15 +10,26 @@ exports.handler = async (event) => {
         if(event.requestContext.eventType){
             
             if(event.requestContext.eventType == 'CONNECT'){
+               
                 response = await connect(event);
+                
+                return { 
+                    statusCode: 200, 
+                    body: JSON.stringify(response) /*required on lambda proxy integration*/
+                };
+        
+            }else if(event.requestContext.eventType == 'DISCONNECT'){
+               
+                response = await disconnect(event);
+                
+                return { 
+                    statusCode: 200, 
+                    body: JSON.stringify(response) /*required on lambda proxy integration*/
+                };
+        
             }
 
         }
-        
-        return { 
-            statusCode: 200, 
-            body: JSON.stringify(response) /*required on lambda proxy integration*/
-        };
         
     }catch(err){
 
