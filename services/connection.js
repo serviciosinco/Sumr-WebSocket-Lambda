@@ -20,7 +20,7 @@ exports.connect = async(event)=>{
                             ReturnValues:'ALL_OLD'
                         }).promise();
 
-            if(!isN(save.Attributes)){
+            if(!isN(save)){
                 response = { status:'success' };
             }
 
@@ -66,7 +66,7 @@ exports.disconnect = async(event)=>{
                             }
                         }).promise(); console.log(remove);
 
-            if(remove){
+            if(!isN(remove)){
                 response = { status:'success' };
             }
 
