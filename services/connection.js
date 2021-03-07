@@ -9,11 +9,12 @@ exports.connect = async(event)=>{
         
         var dynamodb = new AWS.DynamoDB();
         var params = {
-            TableName: "dev-ws",
+            TableName: 'dev-ws',
             Item: {
                 connectionId: { S: event.requestContext.connectionId },
                 allData: { S: JSON.stringify(event) }
-            }
+            },
+            ReturnValues:'ALL_NEW'
         };
 
         try{
@@ -43,7 +44,7 @@ exports.disconnect = async(event)=>{
 
         var dynamodb = new AWS.DynamoDB();
         var params = {
-            TableName: "dev-ws",
+            TableName: 'dev-ws',
             Key: {
                 connectionId: { S:event.requestContext.connectionId }
             }
