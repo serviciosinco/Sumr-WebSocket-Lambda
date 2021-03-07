@@ -10,7 +10,7 @@ exports.connect = async(event)=>{
             TableName: "dev-ws",
             Item: {
                 connectionId: { S: event.requestContext.connectionId },
-                allData: { S: JSON.stringify(event.requestContext.eventType) }
+                allData: { S: JSON.stringify(event) }
             }
         };
 
@@ -33,7 +33,7 @@ exports.disconnect = async(event)=>{
         var params = {
             TableName: "dev-ws",
             Item: {
-                connectionId: { S: event.requestContext.connectionId }
+                connectionId: { S: event }
             }
         };
 
