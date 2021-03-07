@@ -11,7 +11,7 @@ exports.handler = async (event) => {
             
             if(event.requestContext.eventType == 'CONNECT'){
                
-                response = await connect(event);
+                response = await connect(event); console.log(response);
                 
                 if(response && response.status == 'success'){
                     return { 
