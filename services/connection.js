@@ -54,8 +54,7 @@ exports.disconnect = async(event)=>{
             Item: {
                 connectionId: { S: 'OLD_'+event.requestContext.connectionId },
                 allData: { S: JSON.stringify(event) }
-            },
-            ReturnValues:'ALL_OLD'
+            }
         }).promise();
 
         try{
