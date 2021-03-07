@@ -8,20 +8,19 @@ exports.connect = async(event)=>{
     if(!isN(event)){
         
         var dynamodb = new AWS.DynamoDB();
-        var params = {
-            TableName: 'dev-ws',
-            Item: {
-                connectionId: { S: event.requestContext.connectionId },
-                allData: { S: JSON.stringify(event) }
-            },
-            ReturnValues:'ALL_OLD'
-        };
 
         try{
 
-            let send = await dynamodb.putItem(params).promise();
+            let save =  await dynamodb.putItem({
+                            TableName: 'dev-ws',
+                            Item: {
+                                connectionId: { S: event.requestContext.connectionId },
+                                allData: { S: JSON.stringify(event) }
+                            },
+                            ReturnValues:'ALL_OLD'
+                        }).promise();
 
-            if(send.Attributes.connectionId){
+            if(!isN(save.Attributes)){
                 response = { status:'success' };
             }
 
@@ -47,21 +46,28 @@ exports.disconnect = async(event)=>{
     var response = { status:'start' };
 
     if(!isN(event)){
-
+        
         var dynamodb = new AWS.DynamoDB();
-        var params = {
+
+        await dynamodb.putItem({
             TableName: 'dev-ws',
-            Key: {
-                connectionId: { S:event.requestContext.connectionId }
+            Item: {
+                connectionId: { S: 'OLD_'+event.requestContext.connectionId },
+                allData: { S: JSON.stringify(event) }
             },
-            ReturnValues:'ALL_NEW'
-        };
+            ReturnValues:'ALL_OLD'
+        }).promise();
 
         try{
+            
+            let remove = await dynamodb.deleteItem({
+                            TableName: 'dev-ws',
+                            Key: {
+                                connectionId: { S:event.requestContext.connectionId }
+                            }
+                        }).promise(); console.log(remove);
 
-            let send = await dynamodb.deleteItem(params).promise(); console.log(send);
-
-            if(send.Attributes.connectionId){
+            if(remove){
                 response = { status:'success' };
             }
 
