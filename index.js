@@ -3,7 +3,7 @@ const { connect, disconnect } = require('./services/connection');
 
 exports.handler = async (event) => {
     
-    let response = { e:'no' };
+    let response = { status:'start' };
 
     try {
 

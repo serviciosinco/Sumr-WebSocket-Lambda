@@ -3,7 +3,7 @@ const { isN } = require('./common');
 
 exports.connect = async(event)=>{
 
-    var reponse = { status:'start' };
+    var response = { status:'start' };
 
     if(!isN(event)){
         
@@ -22,18 +22,20 @@ exports.connect = async(event)=>{
             let send = await dynamodb.putItem(params).promise();
 
             if(send.Attributes.connectionId){
-                reponse = { status:'success' };
+                response = { status:'success' };
             }
 
         }catch(err){
-            reponse = { status:'failed', error:err };
+
+            response = { status:'failed', error:err };
+        
         }
 
-        return reponse;
+        return response;
 
     }else{
 
-        return reponse;
+        return response;
 
     }
 
@@ -41,6 +43,8 @@ exports.connect = async(event)=>{
 
 
 exports.disconnect = async(event)=>{
+
+    var response = { status:'start' };
 
     if(!isN(event)){
 
@@ -58,13 +62,21 @@ exports.disconnect = async(event)=>{
             let send = await dynamodb.deleteItem(params).promise(); console.log(send);
 
             if(send.Attributes.connectionId){
-                reponse = { status:'success' };
+                response = { status:'success' };
             }
-            
+
         }catch(err){
-            reponse = { status:'failed', error:err };
+
+            response = { status:'failed', error:err };
+
         }
 
+        return response;
+
+
+    }else{
+
+        return response;
 
     }
 
