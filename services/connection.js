@@ -14,11 +14,8 @@ exports.connect = async(event)=>{
             }
         };
 
-        send = async()=>{
-            await dynamodb.putItem(params).promise();
-        }
-
-        return send;
+        send = await dynamodb.putItem(params).promise();
+        return { e:'ok' };
 
     }
 
@@ -32,16 +29,13 @@ exports.disconnect = async(event)=>{
         var dynamodb = new AWS.DynamoDB();
         var params = {
             TableName: "dev-ws",
-            Item: {
-                connectionId: { S: event }
+            Key: {
+                connectionId: { S:event.requestContext.connectionId }
             }
         };
 
-        send = async()=>{
-            await dynamodb.deleteItem(params).promise();
-        }
-
-        return send;
+        var send = await dynamodb.deleteItem(params).promise(); console.log(send);
+        //return send;
 
     }
 

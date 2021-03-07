@@ -13,19 +13,23 @@ exports.handler = async (event) => {
                
                 response = await connect(event);
                 
-                return { 
-                    statusCode: 200, 
-                    body: JSON.stringify(response) /*required on lambda proxy integration*/
-                };
+                if(response){
+                    return { 
+                        statusCode: 200, 
+                        body: JSON.stringify(response) /*required on lambda proxy integration*/
+                    };
+                }
         
             }else if(event.requestContext.eventType == 'DISCONNECT'){
                
                 response = await disconnect(event);
                 
-                return { 
-                    statusCode: 200, 
-                    body: JSON.stringify(response) /*required on lambda proxy integration*/
-                };
+                if(response){
+                    return { 
+                        statusCode: 200, 
+                        body: JSON.stringify(response) /*required on lambda proxy integration*/
+                    };
+                }
         
             }
 
