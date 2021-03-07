@@ -14,7 +14,7 @@ exports.connect = async(event)=>{
                 connectionId: { S: event.requestContext.connectionId },
                 allData: { S: JSON.stringify(event) }
             },
-            ReturnValues:'ALL_NEW'
+            ReturnValues:'ALL_OLD'
         };
 
         try{
