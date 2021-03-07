@@ -20,8 +20,10 @@ exports.connect = async(event)=>{
         try{
 
             let send = await dynamodb.putItem(params).promise();
-            console.log("Success");
-            console.log(send.Attributes.connectionId);
+
+            if(send.Attributes.connectionId){
+                reponse = { status:'success' };
+            }
 
         }catch(err){
             reponse = { status:'failed', error:err };
