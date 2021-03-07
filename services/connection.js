@@ -17,8 +17,11 @@ exports.connect = async(event)=>{
         };
 
         try{
+
             let send = await dynamodb.putItem(params).promise();
+            console.log("Success");
             console.log(send);
+
         }catch(err){
             reponse = { status:'failed', error:err };
         }
