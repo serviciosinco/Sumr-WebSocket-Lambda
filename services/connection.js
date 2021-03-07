@@ -3,8 +3,10 @@ const { isN } = require('./common');
 
 exports.connect = async(event)=>{
 
-    if(!isN(event)){
+    var reponse = { status:'start' };
 
+    if(!isN(event)){
+        
         var dynamodb = new AWS.DynamoDB();
         var params = {
             TableName: "dev-ws",
@@ -14,8 +16,18 @@ exports.connect = async(event)=>{
             }
         };
 
-        send = await dynamodb.putItem(params).promise();
-        return { e:'ok' };
+        try{
+            let send = await dynamodb.putItem(params).promise();
+            console.log(send);
+        }catch(err){
+            reponse = { status:'failed', error:err };
+        }
+
+        return reponse;
+
+    }else{
+
+        return reponse;
 
     }
 
