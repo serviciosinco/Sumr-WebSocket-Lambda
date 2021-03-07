@@ -15,7 +15,7 @@ exports.connect = async(event)=>{
                             TableName: 'dev-ws',
                             Item: {
                                 connectionId: { S: event.requestContext.connectionId },
-                                allData: { S: JSON.stringify(event) }
+                                /*allData: { S: JSON.stringify(event) }*/
                             },
                             ReturnValues:'ALL_OLD'
                         }).promise();
@@ -49,14 +49,6 @@ exports.disconnect = async(event)=>{
         
         var dynamodb = new AWS.DynamoDB();
 
-        /*await dynamodb.putItem({
-            TableName: 'dev-ws',
-            Item: {
-                connectionId: { S: 'OLD_'+event.requestContext.connectionId },
-                allData: { S: JSON.stringify(event) }
-            }
-        }).promise();*/
-
         try{
             
             let remove = await dynamodb.deleteItem({
@@ -64,7 +56,7 @@ exports.disconnect = async(event)=>{
                             Key: {
                                 connectionId: { S:event.requestContext.connectionId }
                             }
-                        }).promise(); console.log(remove);
+                        }).promise();
 
             if(!isN(remove)){
                 response = { status:'success' };
