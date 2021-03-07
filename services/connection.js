@@ -49,11 +49,22 @@ exports.disconnect = async(event)=>{
             TableName: 'dev-ws',
             Key: {
                 connectionId: { S:event.requestContext.connectionId }
-            }
+            },
+            ReturnValues:'ALL_NEW'
         };
 
-        var send = await dynamodb.deleteItem(params).promise(); console.log(send);
-        //return send;
+        try{
+
+            let send = await dynamodb.deleteItem(params).promise(); console.log(send);
+
+            if(send.Attributes.connectionId){
+                reponse = { status:'success' };
+            }
+            
+        }catch(err){
+            reponse = { status:'failed', error:err };
+        }
+
 
     }
 

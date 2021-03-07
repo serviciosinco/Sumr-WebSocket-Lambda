@@ -13,7 +13,7 @@ exports.handler = async (event) => {
                
                 response = await connect(event);
                 
-                if(response){
+                if(response && response.status == 'success'){
                     return { 
                         statusCode: 200, 
                         body: JSON.stringify(response) /*required on lambda proxy integration*/
@@ -24,7 +24,7 @@ exports.handler = async (event) => {
                
                 response = await disconnect(event);
                 
-                if(response){
+                if(response && response.status == 'success'){
                     return { 
                         statusCode: 200, 
                         body: JSON.stringify(response) /*required on lambda proxy integration*/
