@@ -7,9 +7,9 @@ exports.Connect = async(event)=>{
 
     if(!isN(event)){
         
-        if(!isN( event.queryStringParameters.['session_token'] )){
+        if(!isN( event.queryStringParameters ) && !isN( event.queryStringParameters['session_token'] )){
             
-            var SesDt = await SessionDetail({ id:event.queryStringParameters.['session_token'], t:'enc' });
+            var SesDt = await SessionDetail({ id:event.queryStringParameters['session_token'], t:'enc' });
 
             if(SesDt.e == 'ok'){
 
