@@ -1,5 +1,6 @@
+require('dotenv').config({ path: './.env/.env' });
 const AWS = require('aws-sdk');
-const { connect, disconnect } = require('./services/connection');
+const { Connect, Disconnect } = require('./functions/services/websocket');
 
 exports.handler = async (event) => {
     
@@ -11,7 +12,7 @@ exports.handler = async (event) => {
             
             if(event.requestContext.eventType == 'CONNECT'){
                
-                response = await connect(event);
+                response = await Connect(event);
                 
                 if(response && response.status == 'success'){
                     return { 
@@ -22,7 +23,7 @@ exports.handler = async (event) => {
         
             }else if(event.requestContext.eventType == 'DISCONNECT'){
                
-                response = await disconnect(event);
+                response = await Disconnect(event);
                 
                 if(response && response.status == 'success'){
                     return { 
