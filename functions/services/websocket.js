@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const { isN } = require('../common');
+const { DBGet, DBSelector } = require('./connection');
 
 exports.Connect = async(event)=>{
 
