@@ -11,7 +11,7 @@ exports.Connect = async(event)=>{
             
             var SesDt = await SessionDetail({ id:event.queryStringParameters.['session_token'], t:'enc' });
 
-            if(SesDt.e == 'ok' && isN(SesDt.id) && SesDt.est){
+            if(SesDt.e == 'ok'){
 
                 var dynamodb = new AWS.DynamoDB();
 
