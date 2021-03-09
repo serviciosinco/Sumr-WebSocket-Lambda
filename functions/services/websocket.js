@@ -12,7 +12,7 @@ exports.Connect = async(event)=>{
             
             var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], t:'enc' });
 
-            if(SesDt.e == 'ok'){
+            if(SesDt.e == 'ok' && !isN(SesDt.id) && !isN(SesDt.est) && SesDt.est == 1){
 
                 var dynamodb = new AWS.DynamoDB();
 
@@ -105,14 +105,19 @@ exports.SessionDetail = async function(p=null){
                     });
 
     if(get){
+        
         rsp.e = 'ok';
+
         if(!isN(get[0])){
             rsp.id = get[0].id_uses;
             rsp.enc = get[0].uses_enc;
             rsp.est = get[0].uses_est;
         }
+
     }else {
+
         rsp['w'] = 'No ID result';
+
     }
 
     return rsp;
