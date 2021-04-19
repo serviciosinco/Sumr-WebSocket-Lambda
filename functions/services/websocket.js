@@ -98,10 +98,14 @@ exports.SessionDetail = async function(p=null){
         rsp={e:'no'};
 
     if(p.t == 'enc'){ fld = 'uses_enc'; }
-    else if(p.t == 'jwt'){ fld = 'uses_enc'; }
+    else if(p.t == 'jwt'){ 
+        fld = 'uses_enc'; 
+        let decoded = jwt.verify(p.id, process.env.ENCRYPT_JWT);
+        p.id = decoded && decoded.data && decoded.data.session_id ? decoded.data.session_id : '';
+    }
     else{ fld = 'id_uses'; }
 
-    var decoded = jwt.verify(p.id, process.env.ENCRYPT_JWT); console.log('decoded:',decoded);
+    
 
     let get = await DBGet({
                         q: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fld}=? LIMIT 1`,
