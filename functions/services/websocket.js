@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const jwt = require('jsonwebtoken');
 const { isN } = require('../common');
 const { DBGet, DBSelector } = require('./connection');
 
@@ -10,7 +11,7 @@ exports.Connect = async(event)=>{
         
         if(!isN( event.queryStringParameters ) && !isN( event.queryStringParameters['session_token'] )){
             
-            var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], t:'enc' });
+            var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], t:'jwt' });
 
             if(SesDt.e == 'ok' && !isN(SesDt.id) && !isN(SesDt.est) && SesDt.est == 1){
 
@@ -97,8 +98,11 @@ exports.SessionDetail = async function(p=null){
         rsp={e:'no'};
 
     if(p.t == 'enc'){ fld = 'uses_enc'; }
+    else if(p.t == 'jwt'){ fld = 'uses_enc'; }
     else{ fld = 'id_uses'; }
 
+    var decoded = jwt.verify(p.id); console.log('decoded:',decoded);
+    
     let get = await DBGet({
                         q: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fld}=? LIMIT 1`,
                         d:[ p.id ]
