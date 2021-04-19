@@ -101,8 +101,8 @@ exports.SessionDetail = async function(p=null){
     else if(p.t == 'jwt'){ fld = 'uses_enc'; }
     else{ fld = 'id_uses'; }
 
-    var decoded = jwt.verify(p.id); console.log('decoded:',decoded);
-    
+    var decoded = jwt.verify(p.id, process.env.ENCRYPT_JWT); console.log('decoded:',decoded);
+
     let get = await DBGet({
                         q: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fld}=? LIMIT 1`,
                         d:[ p.id ]
