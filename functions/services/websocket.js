@@ -106,6 +106,8 @@ exports.SessionDetail = async function(p=null){
 
     try{
         
+        console.log('Check with ignatue>',process.env.ENCRYPT_JWT);
+
         if(p.t == 'enc'){ 
             fld = 'uses_enc';
         }else if(p.t == 'jwt'){
