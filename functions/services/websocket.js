@@ -102,19 +102,19 @@ exports.SessionDetail = async function(p=null){
 
     let fld='',
         rsp={e:'no'},
-        tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`; console.log('p.id:', p.id);
-
-    if(p.t == 'enc'){ 
-        fld = 'uses_enc';
-    }else if(p.t == 'jwt'){
-        fld = 'uses_enc'; 
-        let decoded = jwt.verify(p.id, process.env.ENCRYPT_JWT); console.log('decoded:', decoded);
-        p.id = decoded && decoded.data && decoded.data.session_id ? decoded.data.session_id : '';
-    }else{ 
-        fld = 'id_uses';
-    }
+        tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`;
 
     try{
+        
+        if(p.t == 'enc'){ 
+            fld = 'uses_enc';
+        }else if(p.t == 'jwt'){
+            fld = 'uses_enc'; 
+            let decoded = jwt.verify(p.id, process.env.ENCRYPT_JWT); console.log('decoded:', decoded.data.session_id);
+            p.id = decoded && decoded.data && decoded.data.session_id ? decoded.data.session_id : '';
+        }else{ 
+            fld = 'id_uses';
+        }
         
         var get = await DYNAMO.query({
                     TableName : tableSource,
