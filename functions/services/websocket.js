@@ -14,7 +14,7 @@ exports.Connect = async(event)=>{
             
             var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], t:'jwt' });
 
-            if(SesDt.e == 'ok' && !isN(SesDt.id) && !isN(SesDt.est) && SesDt.est == 1){
+            if(SesDt?.id && SesDt?.est == 1){
 
                 try{
 
@@ -157,7 +157,7 @@ exports.SessionDetail = async function(p=null){
             if(get && item){ console.log( item );
 
                 if(item){
-                    rsp.id = item.id_uses;
+                    rsp.id = item?.id ? item?.id : item.id_uses;
                     rsp.enc = item.uses_enc;
                     rsp.est = item.uses_est;
                 }
