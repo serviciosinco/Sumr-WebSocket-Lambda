@@ -2,7 +2,7 @@ require('dotenv').config({ path: './.env/.env' });
 const AWS = require('aws-sdk');
 const { Connect, Disconnect } = require('./functions/services/websocket');
 
-exports.handler = async (event) => { console.log( event );
+exports.handler = async (event) => {
     
     let response = { status:'start' };
 
