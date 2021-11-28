@@ -154,7 +154,7 @@ exports.SessionDetail = async function(p=null){
 
             }
 
-            if(get && item){ console.log( item );
+            if(get && item){
 
                 if(item){
                     rsp.id = item?.id ? item?.id : item.id_uses;
