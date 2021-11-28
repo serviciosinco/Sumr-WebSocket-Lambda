@@ -12,15 +12,15 @@ exports.handler = async (event) => {
             
             if(event.requestContext.eventType == 'CONNECT'){
                
-                let connect = await Connect(event); console.log('Lets connect :',Connect);
+                let connect = await Connect(event);
                 
-                if(connect && connect.status == 'success'){ console.log('Succc:',connect);
+                if(connect && connect.status == 'success'){
                     return { 
                         statusCode: 200, 
                         body: JSON.stringify(connect) /*required on lambda proxy integration*/
                     };
                 }else{
-                    console.log('connect:',connect);
+                    console.log('connect failure:',connect);
                 }
         
             }else if(event.requestContext.eventType == 'DISCONNECT'){
