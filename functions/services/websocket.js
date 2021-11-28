@@ -123,8 +123,8 @@ exports.SessionDetail = async function(p=null){
             var get = await DYNAMO.query({
                         TableName : tableSource,
                         IndexName: 'uses_enc-index',
-                        KeyConditionExpression: 'uses_enc = :idv',
-                        ExpressionAttributeValues: { ":idv":  {S:p.id } },
+                        KeyConditionExpression: 'uses_enc = :encv',
+                        ExpressionAttributeValues: { ":encv":  p?.id },
                         Limit: 1
                     }).promise(); console.log('get query:',get);
             
@@ -133,8 +133,8 @@ exports.SessionDetail = async function(p=null){
                 var get = await DYNAMO.scan({
                         TableName: tableSource,
                         IndexName: 'uses_enc-index',
-                        FilterExpression: 'uses_enc = :idv',
-                        ExpressionAttributeValues: { ':idv': { S:p.id } },
+                        FilterExpression: 'uses_enc = :encv',
+                        ExpressionAttributeValues: { ':encv': p?.id },
                         Limit: 1
                     }).promise(); console.log('get scan:',get);
                     
