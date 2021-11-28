@@ -18,7 +18,7 @@ exports.Connect = async(event)=>{
 
                 try{
 
-                    let save =  await DYNAMO.putItem({
+                    let save =  await DYNAMO.put({
                                     TableName: 'dev-ws',
                                     Item: {
                                         connectionId: event.requestContext.connectionId,
@@ -65,7 +65,7 @@ exports.Disconnect = async(event)=>{
 
         try{
             
-            let remove = await DYNAMO.deleteItem({
+            let remove = await DYNAMO.delete({
                             TableName: 'dev-ws',
                             Key: {
                                 connectionId: event.requestContext.connectionId
