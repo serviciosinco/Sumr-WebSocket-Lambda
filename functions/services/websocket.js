@@ -1,5 +1,5 @@
 const   AWS = require('aws-sdk'),
-        DYNAMO = new AWS.DynamoDB(),
+        DYNAMO = new AWS.DynamoDB.DocumentClient(),
         jwt = require('jsonwebtoken'),
         { isN } = require('../common'),
         { DBGet, DBSelector } = require('./connection');
@@ -16,15 +16,13 @@ exports.Connect = async(event)=>{
 
             if(SesDt.e == 'ok' && !isN(SesDt.id) && !isN(SesDt.est) && SesDt.est == 1){
 
-                var DYNAMO = new AWS.DynamoDB();
-
                 try{
 
                     let save =  await DYNAMO.putItem({
                                     TableName: 'dev-ws',
                                     Item: {
-                                        connectionId: { S: event.requestContext.connectionId },
-                                        allData: { S: JSON.stringify(event) }
+                                        connectionId: event.requestContext.connectionId,
+                                        allData: JSON.stringify(event)
                                     },
                                     ReturnValues:'ALL_OLD'
                                 }).promise();
@@ -65,14 +63,14 @@ exports.Disconnect = async(event)=>{
 
     if(!isN(event)){
         
-        var DYNAMO = new AWS.DynamoDB();
+        var DYNAMO = new AWS.DynamoDB.DocumentClient();
 
         try{
             
             let remove = await DYNAMO.deleteItem({
                             TableName: 'dev-ws',
                             Key: {
-                                connectionId: { S:event.requestContext.connectionId }
+                                connectionId: event.requestContext.connectionId
                             }
                         }).promise();
 
@@ -124,7 +122,7 @@ exports.SessionDetail = async function(p=null){
                         TableName : tableSource,
                         IndexName: 'uses_enc-index',
                         KeyConditionExpression: 'uses_enc = :encv',
-                        ExpressionAttributeValues: { ':encv':  { S:p?.id } },
+                        ExpressionAttributeValues: { ':encv':p?.id },
                         Limit: 1
                     }).promise(); console.log('get query:',get);
             
@@ -134,7 +132,7 @@ exports.SessionDetail = async function(p=null){
                         TableName: tableSource,
                         IndexName: 'uses_enc-index',
                         FilterExpression: 'uses_enc = :encv',
-                        ExpressionAttributeValues: { ':encv': { S:p?.id } },
+                        ExpressionAttributeValues: { ':encv':p?.id },
                         Limit: 1
                     }).promise(); console.log('get scan:',get);
                     
