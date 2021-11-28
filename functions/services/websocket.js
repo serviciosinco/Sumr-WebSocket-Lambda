@@ -167,7 +167,7 @@ exports.SessionDetail = async function(p=null){
 
     }catch(err){
 
-        console.log(err);
+        console.log('err:',err);
         rsp = { status:'failed', error:err };
 
     }
