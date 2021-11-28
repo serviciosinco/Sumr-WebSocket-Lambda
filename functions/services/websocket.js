@@ -149,6 +149,8 @@ exports.SessionDetail = async function(p=null){
 
             }
 
+            console.log('get form rds:',get);
+
             if(get){
                 
                 rsp.e = 'ok';
