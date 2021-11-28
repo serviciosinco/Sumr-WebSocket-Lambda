@@ -12,23 +12,25 @@ exports.handler = async (event) => {
             
             if(event.requestContext.eventType == 'CONNECT'){
                
-                response = await Connect(event);
+                let connect = await Connect(event); console.log('Lets connect :',Connect);
                 
-                if(response && response.status == 'success'){
+                if(connect && connect.status == 'success'){ console.log('Succc:',connect);
                     return { 
                         statusCode: 200, 
-                        body: JSON.stringify(response) /*required on lambda proxy integration*/
+                        body: JSON.stringify(connect) /*required on lambda proxy integration*/
                     };
+                }else{
+                    console.log('connect:',connect);
                 }
         
             }else if(event.requestContext.eventType == 'DISCONNECT'){
                
-                response = await Disconnect(event);
+                let connect = await Disconnect(event);
                 
-                if(response && response.status == 'success'){
+                if(connect && connect.status == 'success'){
                     return { 
                         statusCode: 200, 
-                        body: JSON.stringify(response) /*required on lambda proxy integration*/
+                        body: JSON.stringify(connect) /*required on lambda proxy integration*/
                     };
                 }
         
@@ -38,7 +40,7 @@ exports.handler = async (event) => {
         
     }catch(err){
 
-        response['w'] = err.message;
+        response.error = err.message;
 
         return{
             statusCode: 400,
@@ -46,5 +48,7 @@ exports.handler = async (event) => {
         }
 
     }
+
+    return response;
 
 };

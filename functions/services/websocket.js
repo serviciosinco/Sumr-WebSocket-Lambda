@@ -38,17 +38,21 @@ exports.Connect = async(event)=>{
                 
                 }
 
-                return response;
+            }else{
+
+                response.error = 'No SesDt result';
 
             }
 
+        }else{
+
+            response.error = `Query parameters ${ JSON.stringify(event.queryStringParameters) }`;
+
         }
 
-    }else{
-
-        return response;
-
     }
+    
+    return response;
 
 };
 
