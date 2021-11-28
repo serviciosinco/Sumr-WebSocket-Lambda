@@ -62,8 +62,6 @@ exports.Disconnect = async(event)=>{
     var response = { status:'start' };
 
     if(!isN(event)){
-        
-        var DYNAMO = new AWS.DynamoDB.DocumentClient();
 
         try{
             
@@ -116,7 +114,7 @@ exports.SessionDetail = async function(p=null){
         
         if(p?.id){
 
-            console.log(`Search with id: ${p.id}`);
+            console.log(`Search with id: ${p.id} on ${tableSource}`);
 
             var get = await DYNAMO.query({
                         TableName : tableSource,
@@ -141,9 +139,9 @@ exports.SessionDetail = async function(p=null){
             if(!get?.Items[0]){
 
                 var get = await DBGet({
-                                    q: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fld}=? LIMIT 1`,
-                                    d:[ p.id ]
-                                });
+                                q: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fld}=? LIMIT 1`,
+                                d:[ p.id ]
+                            });
 
             }
 
