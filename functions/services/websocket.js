@@ -106,13 +106,13 @@ exports.SessionDetail = async function(p=null){
 
     try{
         
-        console.log('Check with ignatue>',process.env.ENCRYPT_JWT);
+        console.log('Check with ignatue>',process.env.SUMR_JWT_KEY);
 
         if(p.t == 'enc'){ 
             fld = 'uses_enc';
         }else if(p.t == 'jwt'){
             fld = 'uses_enc'; 
-            let decoded = jwt.verify(p.id, process.env.ENCRYPT_JWT); console.log('decoded:', decoded.data.session_id);
+            let decoded = jwt.verify(p.id, process.env.SUMR_JWT_KEY); console.log('decoded:', decoded.data.session_id);
             p.id = decoded && decoded.data && decoded.data.session_id ? decoded.data.session_id : '';
         }else{ 
             fld = 'id_uses';
