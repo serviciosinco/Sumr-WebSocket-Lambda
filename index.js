@@ -8,9 +8,9 @@ exports.handler = async (event) => {
 
     try {
 
-        if(event.requestContext.eventType){
+        if(event?.requestContext?.eventType){
             
-            if(event.requestContext.eventType == 'CONNECT'){
+            if(event?.requestContext?.eventType == 'CONNECT'){
                
                 let connect = await Connect(event);
                 
@@ -23,7 +23,7 @@ exports.handler = async (event) => {
                     console.log('connect failure:',connect);
                 }
         
-            }else if(event.requestContext.eventType == 'DISCONNECT'){
+            }else if(event?.requestContext?.eventType == 'DISCONNECT'){
                
                 let connect = await Disconnect(event);
                 
