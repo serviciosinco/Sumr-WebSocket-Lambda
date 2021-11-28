@@ -122,7 +122,7 @@ exports.SessionDetail = async function(p=null){
                         KeyConditionExpression: 'uses_enc = :encv',
                         ExpressionAttributeValues: { ':encv':p?.id },
                         Limit: 1
-                    }).promise(); console.log('get query:',get);
+                    }).promise(); console.log('get query:',get?.Items[0]);
             
             if(!get?.Items[0]){
                 
@@ -132,7 +132,7 @@ exports.SessionDetail = async function(p=null){
                         FilterExpression: 'uses_enc = :encv',
                         ExpressionAttributeValues: { ':encv':p?.id },
                         Limit: 1
-                    }).promise(); console.log('get scan:',get);
+                    }).promise(); console.log('get scan:',get?.Items[0]);
                     
             }
 
