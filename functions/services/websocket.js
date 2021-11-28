@@ -115,8 +115,6 @@ exports.SessionDetail = async function(p=null){
         
         if(p?.id){
 
-            console.log(`Search with id: ${p.id} on ${tableSource}`);
-
             var get = await DYNAMO.query({
                         TableName : tableSource,
                         IndexName: 'uses_enc-index',
@@ -156,9 +154,7 @@ exports.SessionDetail = async function(p=null){
 
             }
 
-            if(get){
-                
-                rsp.e = 'ok';
+            if(get && item){ console.log( item );
 
                 if(item){
                     rsp.id = item.id_uses;
