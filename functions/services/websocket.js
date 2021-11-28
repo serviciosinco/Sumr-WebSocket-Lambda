@@ -124,7 +124,7 @@ exports.SessionDetail = async function(p=null){
                         TableName : tableSource,
                         IndexName: 'uses_enc-index',
                         KeyConditionExpression: 'uses_enc = :idv',
-                        ExpressionAttributeValues: { ":idv": p.id },
+                        ExpressionAttributeValues: { ":idv":  {S:p.id } },
                         Limit: 1
                     }).promise(); console.log('get query:',get);
             
@@ -134,7 +134,7 @@ exports.SessionDetail = async function(p=null){
                         TableName: tableSource,
                         IndexName: 'uses_enc-index',
                         FilterExpression: 'uses_enc = :idv',
-                        ExpressionAttributeValues: { ':idv': p.id },
+                        ExpressionAttributeValues: { ':idv': { S:p.id } },
                         Limit: 1
                     }).promise(); console.log('get scan:',get);
                     
