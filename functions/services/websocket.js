@@ -5,7 +5,7 @@ const { DBGet, DBSelector } = require('./connection');
 
 exports.Connect = async(event)=>{
 
-    var response = { status:'start' };
+    var response = {};
 
     if(!isN(event)){
         
@@ -45,7 +45,8 @@ exports.Connect = async(event)=>{
             }
 
         }else{
-
+            
+            response.status = 'failed';
             response.error = `Query parameters ${ JSON.stringify(event.queryStringParameters) }`;
 
         }
