@@ -98,6 +98,7 @@ exports.SessionDetail = async function(p=null){
 
     let fld='',
         rsp={e:'no'},
+        item,
         tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`;
 
     try{
@@ -122,7 +123,7 @@ exports.SessionDetail = async function(p=null){
                         KeyConditionExpression: 'uses_enc = :encv',
                         ExpressionAttributeValues: { ':encv':p?.id },
                         Limit: 1
-                    }).promise(); console.log('get query:',get?.Items[0]);
+                    }).promise();
             
             if(!get?.Items[0]){
                 
@@ -132,8 +133,12 @@ exports.SessionDetail = async function(p=null){
                         FilterExpression: 'uses_enc = :encv',
                         ExpressionAttributeValues: { ':encv':p?.id },
                         Limit: 1
-                    }).promise(); console.log('get scan:',get?.Items[0]);
-                    
+                    }).promise();
+                
+            }else{
+
+                item = get?.Items[0];
+
             }
 
             if(!get?.Items[0]){
@@ -143,18 +148,22 @@ exports.SessionDetail = async function(p=null){
                                 d:[ p.id ]
                             });
 
-            }
+                item = get[0];
 
-            console.log('get form rds:',get);
+            }else{
+
+                item = get?.Items[0];
+
+            }
 
             if(get){
                 
                 rsp.e = 'ok';
 
-                if(!isN(get[0])){
-                    rsp.id = get[0].id_uses;
-                    rsp.enc = get[0].uses_enc;
-                    rsp.est = get[0].uses_est;
+                if(item){
+                    rsp.id = item.id_uses;
+                    rsp.enc = item.uses_enc;
+                    rsp.est = item.uses_est;
                 }
 
             }else {
