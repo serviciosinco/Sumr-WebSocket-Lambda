@@ -2,7 +2,7 @@ const   AWS = require('aws-sdk'),
         DYNAMO = new AWS.DynamoDB.DocumentClient(),
         { isDev } = require('../../../common'),
         { GetUserDetail } = require('../../../user'),
-        uuidv4 = require("uuid/v4");
+        { v4: uuidv4 } = require('uuid');
 
 exports.SetAlive = async function(params=null){
 
