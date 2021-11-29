@@ -25,7 +25,7 @@ exports.GetUserDetail = async(params)=>{
 
     }catch(e){
 
-        reject(e);
+        response.error = e;
 
     }
     
