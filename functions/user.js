@@ -1,6 +1,7 @@
 const   AWS = require('aws-sdk'),
         DYNAMO = new AWS.DynamoDB.DocumentClient(),
         { isDev } = require('./common');
+        
 exports.GetUserDetail = async(params)=>{
 
     var response = {};
@@ -17,7 +18,7 @@ exports.GetUserDetail = async(params)=>{
                     Limit: 1
                 };
                 
-        var get = await DYNAMO.query(paramsDynamo).promise(); console.log('get:', get);
+        var get = await DYNAMO.query(paramsDynamo).promise();
 
         if(get?.Items[0]){
             response.id = get?.Items[0]?.id

@@ -14,25 +14,25 @@ exports.SetAlive = async function(params=null){
         
         try{
             
-            paramsDynamo = {
-                TableName: `${ isDev() ? 'dev':'prd' }-us-nvgt`,
-                Item:{
-                    id: uuidv4(),
-                    user: UserDetail?.id,
-                    connection:{
-                        speed: data?.connection?.speed ? data.connection.speed : '',
-                        rtt: data?.connection?.rtt ? data.connection.rtt : '',
-                        type: data?.connection?.type ? data.connection.type : ''
+            const paramsDynamo = {
+                    TableName: `${ isDev() ? 'dev':'prd' }-us-nvgt`,
+                    Item:{
+                        id: uuidv4(),
+                        user: UserDetail?.id,
+                        connection:{
+                            speed: data?.connection?.speed ? data.connection.speed : '',
+                            rtt: data?.connection?.rtt ? data.connection.rtt : '',
+                            type: data?.connection?.type ? data.connection.type : ''
+                        },
+                        navigation:{
+                            cookie: data?.navigator?.cookie ? data.navigator.cookie:'',
+                            online: data?.navigator?.online ? data.navigator.online:'',
+                            memory: data?.navigator?.memory ? data.navigator.memory:''
+                        },
+                        ttl:new Date().setDate(new Date().getDate() + 7)
                     },
-                    navigation:{
-                        cookie: data?.navigator?.cookie ? data.navigator.cookie:'',
-                        online: data?.navigator?.online ? data.navigator.online:'',
-                        memory: data?.navigator?.memory ? data.navigator.memory:''
-                    },
-                    ttl:new Date().setDate(new Date().getDate() + 7)
-                },
-                ReturnValues:"ALL_OLD"
-            };
+                    ReturnValues:"ALL_OLD"
+                };
 
             let save =  await DYNAMO.put(paramsDynamo).promise();
 
