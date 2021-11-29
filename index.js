@@ -5,49 +5,46 @@ const   AWS = require('aws-sdk'),
 
 exports.handler = async (event) => {
     
-    let response = { };
+    let response = { },
+        eventType = event?.requestContext?.eventType;
 
     try {
-
-        if(event?.requestContext?.eventType){
             
-            if(event?.requestContext?.eventType == 'CONNECT'){
-               
-                let connect = await Connect(event);
-                
-                if(connect && connect.status == 'success'){
-                    return { 
-                        statusCode: 200, 
-                        body: JSON.stringify(connect) /*required on lambda proxy integration*/
-                    };
-                }else{
-                    console.log('connect failure:',connect);
-                }
-        
-            }else if(event?.requestContext?.eventType == 'DISCONNECT'){
-               
-                let connect = await Disconnect(event);
-                
-                if(connect && connect.status == 'success'){
-                    return { 
-                        statusCode: 200, 
-                        body: JSON.stringify(connect) /*required on lambda proxy integration*/
-                    };
-                }
-        
-            }else if(event?.requestContext?.eventType == 'MESSAGE'){
-               
-                let message = await MessageHandle(event);
-                
-                if(message && message.status == 'success'){
-                    return { 
-                        statusCode: 200, 
-                        body: JSON.stringify(message)
-                    };
-                }
-        
+        if(eventType == 'CONNECT'){
+            
+            let connect = await Connect(event);
+            
+            if(connect && connect.status == 'success'){
+                return { 
+                    statusCode: 200, 
+                    body: JSON.stringify(connect) /*required on lambda proxy integration*/
+                };
+            }else{
+                console.log('connect failure:',connect);
             }
-
+    
+        }else if(eventType == 'DISCONNECT'){
+            
+            let connect = await Disconnect(event);
+            
+            if(connect && connect.status == 'success'){
+                return { 
+                    statusCode: 200, 
+                    body: JSON.stringify(connect) /*required on lambda proxy integration*/
+                };
+            }
+    
+        }else if(eventType == 'MESSAGE'){
+            
+            let message = await MessageHandle(event);
+            
+            if(message && message.status == 'success'){
+                return { 
+                    statusCode: 200, 
+                    body: JSON.stringify(message)
+                };
+            }
+    
         }
         
     }catch(err){

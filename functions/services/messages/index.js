@@ -2,7 +2,7 @@ const { SetAlive } = require('./user/alive');
 
 exports.MessageHandle = async function(event=null){
 
-    const   request = JSON.parse( event?.Records[0].body ),
+    const   request = JSON.parse( event?.body ),
             service = request?.service,
             action = request?.action,
             data = request?.data,
