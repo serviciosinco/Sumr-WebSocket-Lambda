@@ -8,11 +8,11 @@ exports.Connect = async(event)=>{
 
     var response = {};
 
-    if(!isN(event)){
+    if(event){
         
-        if(!isN( event.queryStringParameters ) && !isN( event.queryStringParameters['session_token'] )){
+        if(event?.queryStringParameters && event?.queryStringParameters['session_token']){
             
-            var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], t:'jwt' });
+            var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], type:'jwt' });
 
             if(SesDt?.id && SesDt?.est == 1){
 
@@ -27,7 +27,7 @@ exports.Connect = async(event)=>{
                                     ReturnValues:'ALL_OLD'
                                 }).promise();
 
-                    if(!isN(save)){
+                    if(save){
                         response = { status:'success' };
                     }
 
@@ -61,7 +61,7 @@ exports.Disconnect = async(event)=>{
 
     var response = { status:'start' };
 
-    if(!isN(event)){
+    if(event){
 
         try{
             
@@ -72,7 +72,7 @@ exports.Disconnect = async(event)=>{
                             }
                         }).promise();
 
-            if(!isN(remove)){
+            if(!remove){
                 response = { status:'success' };
             }
 
@@ -94,23 +94,23 @@ exports.Disconnect = async(event)=>{
 };
 
 
-exports.SessionDetail = async function(p=null){
+exports.SessionDetail = async function(param=null){
 
-    let fld='',
-        rsp={e:'no'},
-        item,
-        tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`;
+    let fields='',
+        response={e:'no'},
+        tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`,
+        item;
 
     try{
 
-        if(p.t == 'enc'){ 
-            fld = 'uses_enc';
-        }else if(p.t == 'jwt'){
-            fld = 'uses_enc'; 
-            let decoded = jwt.verify(p.id, process.env.SUMR_JWT_KEY);
-            p.id = decoded?.data?.session_id;
+        if(param.type == 'enc'){ 
+            fields = 'uses_enc';
+        }else if(param.type == 'jwt'){
+            fields = 'uses_enc'; 
+            let decoded = jwt.verify(param.id, process.env.SUMR_JWT_KEY);
+            param.id = decoded?.data?.session_id;
         }else{ 
-            fld = 'id_uses';
+            fields = 'id_uses';
         }
         
         if(p?.id){
@@ -142,8 +142,8 @@ exports.SessionDetail = async function(p=null){
             if(!get?.Items[0]){
 
                 var get = await DBGet({
-                                q: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fld}=? LIMIT 1`,
-                                d:[ p.id ]
+                                query: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fields}=? LIMIT 1`,
+                                data:[ param.id ]
                             });
 
                 item = get[0];
@@ -157,14 +157,14 @@ exports.SessionDetail = async function(p=null){
             if(get && item){
 
                 if(item){
-                    rsp.id = item?.id ? item?.id : item.id_uses;
-                    rsp.enc = item.uses_enc;
-                    rsp.est = item.uses_est;
+                    response.id = item?.id ? item?.id : item.id_uses;
+                    response.enc = item.uses_enc;
+                    response.est = item.uses_est;
                 }
 
             }else {
 
-                rsp.w = 'No ID result';
+                response.w = 'No ID result';
 
             }
 
@@ -173,11 +173,11 @@ exports.SessionDetail = async function(p=null){
     }catch(err){
 
         console.log('err:',err);
-        rsp = { status:'failed', error:err };
+        response = { status:'failed', error:err };
 
     }
 
 
-    return rsp;
+    return response;
 
 };

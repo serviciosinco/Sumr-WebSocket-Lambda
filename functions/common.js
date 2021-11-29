@@ -6,3 +6,8 @@ exports.isN = (p)=>{
 		console.log(err);
 	}
 };
+
+exports.isDev = ()=>{
+	if(process.env.NODE_ENV == 'production') return false;
+	return true;
+}

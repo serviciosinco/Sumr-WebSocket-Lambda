@@ -1,60 +1,52 @@
-//const { Console } = require('console');
-const mysql = require('promise-mysql');
-const { isN, mySecrets } = require('../common');
+const   AWS = require("aws-sdk"),
+        mysql = require('promise-mysql');
 
-var Connection = ''
+var CnxBusRd, CnxBusWrt;
 
-const Connect = async(p=null)=>{
+const Connect = async(param=null)=>{
 
-	var host,user,password,port;
-
-	//if(process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'developer'){
-
-		host = process.env.RDS_HOST;
-		user = process.env.RDS_USERNAME;
-		password = process.env.RDS_PASSWORD;
+	var response = {},
 		port = process.env.RDS_PORT ? process.env.RDS_PORT : 3306;
 
-	/*}else{
-
-		let sm_type = process.env.RDS_SM_READ;
-		if(p.t == 'wrt'){ sm_type = process.env.RDS_SM_WRTE;}
-		let sm_data = await mySecrets( sm_type );
-
-		if(	!isN(sm_data)){
-			host = sm_data.host;
-			port = sm_data.port;
-			user = sm_data.username;
-			password = sm_data.password ? sm_data.password : 3306;
-		}
-
-	}*/
-
-	if(	!isN(p) &&
-		!isN(p.t) &&
-		!isN(host) &&
-		!isN(user) &&
-		!isN(password)
+	if(	
+		!CnxBusRd || 
+		!CnxBusWrt
 	){
-
-		let stng,
-			pool,
-			cnx;
 
 		try{
 
-			stng = {
-				database: 'sumr_bd',
-				host: host,
-				user: user,
-				password: password,
-				port: port,
-				connectionLimit: 10,
-			};
+			if(param?.read){
 
-			pool = await mysql.createPool(stng);
-			cnx = pool.getConnection();
-			return cnx;
+				CnxBusRd = await mysql.createPool({
+					database: 'sumr_bd',
+					host: process.env.RDS_PRVT_HOST_RD ? process.env.RDS_PRVT_HOST_RD : process.env.RDS_HOST_RD,
+					user: process.env.RDS_USERNAME_RD,
+					password: process.env.RDS_PASSWORD_RD,
+					port: port,
+					dateStrings: true,
+					connectionLimit: 10
+				});
+
+				if(CnxBusRd){ response.read = true; }
+
+			}
+
+			if(param?.write){
+
+				CnxBusWrt = await mysql.createPool({
+					database: 'sumr_bd',
+					host: process.env.RDS_PRVT_HOST ? process.env.RDS_PRVT_HOST : process.env.RDS_HOST,
+					user: process.env.RDS_USERNAME,
+					password: process.env.RDS_PASSWORD,
+					port: port,
+					dateStrings: true,
+					connectionLimit: 10
+				});
+
+				if(CnxBusRd){ response.write = true; }
+			}
+
+			return true;
 
 		}catch(e){
 
@@ -68,103 +60,163 @@ const Connect = async(p=null)=>{
 
 	}
 
+	return response;
+
 };
 
-exports.DBSelector = (v=null, d=null)=>{
+exports.DBAccount = (account=null)=>{
+	let response = null;
+	if(account) response = 'sumr_c_'+account;
+	return response;
+};
 
-	let r=null,
-		db=process.env.DBM;
+exports.DBSelector = (table=null, options=null)=>{
 
-	if(!isN(d)){
-		if(d=='d'){ db=process.env.DBD; }
-		else if(d=='c'){ db=process.env.DBC; }
-		else if(d=='t'){ db=process.env.DBT; }
-		else if(d=='p'){ db=process.env.DBP; }
-		else{ db=d; }
+	let response = null,
+		database = process.env.DBM;
+
+	if(options?.db){
+		if(options.db=='d'){ database=process.env.DBD; }
+		else if(options.db=='c'){ database=process.env.DBC; }
+		else if(options.db=='t'){ database=process.env.DBT; }
+		else if(options.db=='p'){ database=process.env.DBP; }
+		else{ database=options.db; }
+	}else if(options?.account){
+		database = this.DBAccount(options?.account);
 	}
 
-	if(!isN(v)){
-		if(v.indexOf('.') !== -1){ r=v; }else{ r=db+'.'+v; }
+	if(table && database){
+		if(table.indexOf('.') !== -1){ response=table; }else{ response=database+'.'+table; }
 	}else{
-		r='';
+		response='';
 	}
 
-	return r;
-},
+	return response;
+};
 
-exports.cls = async function(p){
-	Connection.end(function(){
-		//console.log(' Conexion cerrada \n\n');
-	});
-},
+exports.DBClose = async function(p){
+	if(!CnxBusRd){ await CnxBusRd.end(); }
+	if(!CnxBusWrt){ await CnxBusWrt.end(); }
+};
 
-exports.DBGet = async function(p=null){
+exports.DBGet = async function(param=null){
 
-	if( !isN(p) && !isN(p.q) ){
+	var data_format = [],
+		response = {},
+		query = '',
+		conexDB,
+		conexPool;
 
-		let svle = [];
-		let rsp = {};
-		Connection = await Connect({ t:'rd' });
+	if( param?.query ){
 
-		if(!isN(p.d)){ svle = p.d; }
-
-		if(!isN(Connection)){
-			try {
-
-				let qry = mysql.format(p.q, svle);
-				let prc = await Connection.query(qry);
-
-				if(prc){ rsp = prc; }
-
-			}catch(ex){
-				await Connection.query("ROLLBACK");
-				rsp.w = ex;
-			}finally{
-				await Connection.release();
-				await Connection.destroy();
-			}
+		if(!CnxBusRd){
+			conexDB = await Connect({ read:true });
 		}
 
-		return rsp;
+		if(param?.data){ data_format = param?.data; }
 
-	}
-
-};
-
-exports.DBSave = async function(p=null){
-
-	if( !isN(p) && !isN(p.q) ){
-
-		let svle = [];
-		let rsp = {e:'no'};
-		Connection = await Connect({t:'wrt'});
-
-		if(!isN(Connection)){
+		if(CnxBusRd){
 
 			try {
 
-				if(!isN(p.d)){
-					svle = p.d; 
-					var qry = mysql.format(p.q, svle);
+				conexPool = await CnxBusRd.getConnection();
+				
+				if(param?.data){
+					data_format = param?.data; 
+					query = mysql.format(param?.query, data_format);
 				}else{
-					var qry = p.q;
+					query = param?.query;
 				}
 
-				let prc = await Connection.query(qry);
-				if(prc){ rsp = prc; }
+				const result = await conexPool.query(query);
+				if(result){ response = result; }
 
 			}catch(ex){
-				await Connection.query("ROLLBACK");
-				rsp.w = ex;
+				response.error = ex;
 			}finally{
-				await Connection.release();
-				await Connection.destroy();
+				if(conexPool){ 
+					//console.log('Release connection to:' + ( process.env.RDS_PRVT_HOST_RD ? process.env.RDS_PRVT_HOST_RD : process.env.RDS_HOST ) ); 
+					await conexPool.release(); 
+				}
 			}
+
+		}else{
+
+			response.error = `No read connection`;
 
 		}
 
-		return rsp;
+	}else{
+
+		response.error = `No query for execute`;
 
 	}
 
+	return response;
+
 };
+
+exports.DBSave = async function(param=null){
+
+	var data_format = [],
+		response = {},
+		query = '',
+		conexDB,
+		conexPool;
+
+	if( param?.query ){
+
+		if(!CnxBusWrt){
+			console.log('No Pool Connection, So Create One');
+			conexDB = await Connect({ write:true });
+		}
+
+		if(CnxBusWrt){
+
+			try {
+
+				conexPool = await CnxBusWrt.getConnection();
+
+				if(param?.data){
+					data_format = param?.data; 
+					query = mysql.format(param?.query, data_format);
+				}else{
+					query = param?.query;
+				}
+
+				if(param?.debug){
+					console.log( query );
+					console.log( 'param?.debug:',param?.debug );
+					return false;
+				}
+
+				const result = await conexPool.query(query);
+				if(result){ response = result; }
+
+			}catch(ex){
+				await conexPool.query("ROLLBACK");
+				response.error = ex;
+			}finally{
+				if(conexPool){ await conexPool.release(); }
+			}
+
+		}else{
+		
+			response.error = `No CnxBusWrt connection`;
+			
+		}	
+
+	}else{
+		
+		response.error = `No query string`;
+		
+	}
+
+	return response;
+
+};
+
+
+exports.DBSleep = (time=2000)=>{
+	return new Promise((resolve) => setTimeout(resolve, time));
+}

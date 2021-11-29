@@ -1,6 +1,7 @@
 require('dotenv').config({ path: './.env/.env' });
-const AWS = require('aws-sdk');
-const { Connect, Disconnect } = require('./functions/services/websocket');
+const   AWS = require('aws-sdk'), 
+        { Connect, Disconnect } = require('./functions/services/websocket'),
+        { MessageHandle } = require('./messages/');
 
 exports.handler = async (event) => {
     
@@ -31,6 +32,17 @@ exports.handler = async (event) => {
                     return { 
                         statusCode: 200, 
                         body: JSON.stringify(connect) /*required on lambda proxy integration*/
+                    };
+                }
+        
+            }else if(event?.requestContext?.eventType == 'MESSAGE'){
+               
+                let message = await MessageHandle(event);
+                
+                if(message && message.status == 'success'){
+                    return { 
+                        statusCode: 200, 
+                        body: JSON.stringify(message)
                     };
                 }
         
