@@ -113,13 +113,13 @@ exports.SessionDetail = async function(param=null){
             fields = 'id_uses';
         }
         
-        if(p?.id){
+        if(param?.id){
 
             var get = await DYNAMO.query({
                         TableName : tableSource,
                         IndexName: 'uses_enc-index',
                         KeyConditionExpression: 'uses_enc = :encv',
-                        ExpressionAttributeValues: { ':encv':p?.id },
+                        ExpressionAttributeValues: { ':encv':param?.id },
                         Limit: 1
                     }).promise();
             
@@ -129,7 +129,7 @@ exports.SessionDetail = async function(param=null){
                         TableName: tableSource,
                         IndexName: 'uses_enc-index',
                         FilterExpression: 'uses_enc = :encv',
-                        ExpressionAttributeValues: { ':encv':p?.id },
+                        ExpressionAttributeValues: { ':encv':param?.id },
                         Limit: 1
                     }).promise();
                 
