@@ -5,7 +5,7 @@ const   AWS = require('aws-sdk'),
 
 exports.handler = async (event) => {
     
-    let response = { status:'start' };
+    let response = { };
 
     try {
 

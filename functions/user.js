@@ -17,9 +17,9 @@ exports.GetUserDetail = async(params)=>{
                     Limit: 1
                 };
                 
-        var get = await DYNAMO.query(paramsDynamo).promise();
+        var get = await DYNAMO.query(paramsDynamo).promise(); console.log('get:', get);
 
-        if(get?.Items[0]){
+        if(get && get?.Items[0]){
             response.id = get?.Items[0].id
         }
 
