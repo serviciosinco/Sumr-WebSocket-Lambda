@@ -22,6 +22,7 @@ exports.Connect = async(event)=>{
                                     TableName: 'dev-ws',
                                     Item: {
                                         connectionId: event.requestContext.connectionId,
+                                        userId: SesDt?.us,
                                         allData: JSON.stringify(event)
                                     },
                                     ReturnValues:'ALL_OLD'
@@ -159,6 +160,7 @@ exports.SessionDetail = async function(param=null){
                 if(item){
                     response.id = item?.id ? item?.id : item.id_uses;
                     response.enc = item.uses_enc;
+                    response.us = item.uses_us;
                     response.est = item.uses_est;
                 }
 
