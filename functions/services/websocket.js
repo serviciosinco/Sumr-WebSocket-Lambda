@@ -6,13 +6,14 @@ const   AWS = require('aws-sdk'),
 
 exports.Connect = async(event)=>{
 
-    var response = {};
+    var response = {},
+        sessionToken = event?.queryStringParameters['session_token'];
 
     if(event){
         
-        if(event?.queryStringParameters && event?.queryStringParameters['session_token']){
+        if(sessionToken){
             
-            var SesDt = await this.SessionDetail({ id:event.queryStringParameters['session_token'], type:'jwt' });
+            var SesDt = await this.SessionDetail({ id:sessionToken, type:'jwt' });
 
             if(SesDt?.id && SesDt?.est == 1){
 
@@ -20,7 +21,7 @@ exports.Connect = async(event)=>{
 
                     let save =  await DYNAMO.put({
                                     TableName: 'dev-ws',
-                                    Item: {
+                                    Item:{
                                         connectionId: event.requestContext.connectionId,
                                         userId: SesDt?.us,
                                         allData: JSON.stringify(event)
@@ -40,7 +41,7 @@ exports.Connect = async(event)=>{
 
             }else{
 
-                response.error = 'No SesDt result';
+                response.error = `No SesDt result for ${sessionToken}`;
 
             }
 
