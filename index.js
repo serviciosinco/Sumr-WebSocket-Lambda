@@ -45,6 +45,10 @@ exports.handler = async (event) => {
                 };
             }
     
+        }else{
+
+            console.log( eventType );
+
         }
         
     }catch(err){
