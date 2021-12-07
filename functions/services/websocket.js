@@ -24,7 +24,8 @@ exports.Connect = async(event)=>{
                                     Item:{
                                         connectionId: event.requestContext.connectionId,
                                         userId: SesDt?.us,
-                                        allData: JSON.stringify(event)
+                                        allData: JSON.stringify(event),
+                                        expiresOn: ( Date.parse(SesDt?.exp) / 1000 )
                                     },
                                     ReturnValues:'ALL_OLD'
                                 }).promise();
@@ -144,7 +145,7 @@ exports.SessionDetail = async function(param=null){
             if(!get?.Items[0]){
 
                 var get = await DBGet({
-                                query: `SELECT id_uses, uses_enc, uses_est FROM `+DBSelector('us_ses')+` WHERE ${fields}=? LIMIT 1`,
+                                query: `SELECT id_uses, uses_enc, uses_est, uses_exp FROM `+DBSelector('us_ses')+` WHERE ${fields}=? LIMIT 1`,
                                 data:[ param.id ]
                             });
 
@@ -163,6 +164,7 @@ exports.SessionDetail = async function(param=null){
                     response.enc = item.uses_enc;
                     response.us = item.uses_us;
                     response.est = item.uses_est;
+                    response.exp = item.uses_exp;
                 }
 
             }else {
