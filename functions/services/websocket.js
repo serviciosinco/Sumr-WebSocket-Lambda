@@ -102,7 +102,8 @@ exports.SessionDetail = async function(param=null){
     let fields='',
         response={},
         tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`,
-        item;
+        item,
+        sourceIT = 'dynamo';
 
     try{
 
@@ -165,6 +166,7 @@ exports.SessionDetail = async function(param=null){
                             });
 
                 item = get[0];
+                sourceIT = 'rds';
 
             }else{
 
@@ -175,11 +177,15 @@ exports.SessionDetail = async function(param=null){
             if(get && item){
 
                 if(item){
+                    
                     response.id = item?.id ? item?.id : item.id_uses;
                     response.enc = item.uses_enc;
                     response.us = item.uses_us;
                     response.est = item.uses_est;
-                    response.exp = item.uses_exp;
+
+                    if(sourceIT=='dynamo') response.exp = item.uses_exp;
+                    else response.exp =  ( Date.parse(item.uses_exp) / 1000 );
+
                 }
 
             }else {
