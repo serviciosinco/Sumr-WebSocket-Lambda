@@ -17,7 +17,7 @@ exports.Connect = async(event)=>{
 
             if(SesDt?.id && SesDt?.est == 1){
 
-                try{
+                try{ console.log( 'SesDt:', SesDt );
 
                     let save =  await DYNAMO.put({
                                     TableName: 'dev-ws',
