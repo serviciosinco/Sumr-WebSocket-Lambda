@@ -42,7 +42,7 @@ exports.Connect = async(event)=>{
 
             }else{
 
-                response.error = `No SesDt result for ${sessionToken}`;
+                response.error = `No SesDt result for ${sessionToken} / ${ SesDt.error }`;
 
             }
 
@@ -121,12 +121,14 @@ exports.SessionDetail = async function(param=null){
 
             }catch(err){
     
-                response = { status:'failed', error:err };
+                response = { error:err };
     
             }
 
         }else{ 
+
             fields = 'id_uses';
+
         }
         
         if(param?.id){

@@ -20,7 +20,10 @@ exports.handler = async (event) => {
                     body: JSON.stringify(connect) /*required on lambda proxy integration*/
                 };
             }else{
-                console.log('connect failure:',connect);
+                return { 
+                    statusCode: 400, 
+                    body: JSON.stringify(connect) /*required on lambda proxy integration*/
+                };
             }
     
         }else if(eventType == 'DISCONNECT'){
