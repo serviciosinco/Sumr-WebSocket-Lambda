@@ -100,7 +100,7 @@ exports.Disconnect = async(event)=>{
 exports.SessionDetail = async function(param=null){
 
     let fields='',
-        response={e:'no'},
+        response={},
         tableSource = `${process?.env?.DYNAMO_PRFX}-us-ses`,
         item;
 
