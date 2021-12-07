@@ -17,7 +17,7 @@ exports.Connect = async(event)=>{
 
             if(SesDt?.id && SesDt?.est == 1){
 
-                try{ console.log( 'SesDt:', SesDt );
+                try{
 
                     let save =  await DYNAMO.put({
                                     TableName: 'dev-ws',
@@ -107,11 +107,24 @@ exports.SessionDetail = async function(param=null){
     try{
 
         if(param.type == 'enc'){ 
+            
             fields = 'uses_enc';
+
         }else if(param.type == 'jwt'){
+
             fields = 'uses_enc'; 
-            let decoded = jwt.verify(param.id, process.env.SUMR_JWT_KEY);
-            param.id = decoded?.data?.session_id;
+
+            try{
+                
+                var decoded = jwt.verify(param.id, process.env.SUMR_JWT_KEY);
+                param.id = decoded?.data?.session_id;
+
+            }catch(err){
+    
+                response = { status:'failed', error:err };
+    
+            }
+
         }else{ 
             fields = 'id_uses';
         }
