@@ -25,7 +25,7 @@ exports.Connect = async(event)=>{
                                         connectionId: event.requestContext.connectionId,
                                         userId: SesDt?.us,
                                         allData: JSON.stringify(event),
-                                        expiresOn: SesDt?.exp ? ( Date.parse(SesDt?.exp) / 1000 ) : null
+                                        expiresOn: SesDt?.exp ? SesDt?.exp: null
                                     },
                                     ReturnValues:'ALL_OLD'
                                 }).promise();
