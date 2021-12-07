@@ -15,7 +15,7 @@ exports.Connect = async(event)=>{
             
             var SesDt = await this.SessionDetail({ id:sessionToken, type:'jwt' });
 
-            if(SesDt?.id && SesDt?.est == 1){
+            if(SesDt?.id && SesDt?.est == 1 && SesDt?.exp){
 
                 try{
 
@@ -177,7 +177,7 @@ exports.SessionDetail = async function(param=null){
             if(get && item){
 
                 if(item){
-                    
+
                     response.id = item?.id ? item?.id : item.id_uses;
                     response.enc = item.uses_enc;
                     response.us = item.uses_us;
