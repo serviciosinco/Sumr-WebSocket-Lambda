@@ -1,7 +1,7 @@
 const   AWS = require('aws-sdk'),
         DYNAMO = new AWS.DynamoDB.DocumentClient(),
         jwt = require('jsonwebtoken'),
-        { isN } = require('../common'),
+        { isN, isDev } = require('../common'),
         { DBGet, DBSelector } = require('./connection');
 
 exports.Connect = async(event)=>{
