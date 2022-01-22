@@ -19,8 +19,9 @@ exports.Connect = async(event)=>{
 
                 try{
 
-                    let save =  await DYNAMO.put({
-                                    TableName: 'dev-ws',
+                    let tableSource = `${ isDev() ? 'dev':'prd' }-ws`,
+                        save =  await DYNAMO.put({
+                                    TableName: tableSource,
                                     Item:{
                                         connectionId: event.requestContext.connectionId,
                                         userId: SesDt?.us,
@@ -67,9 +68,10 @@ exports.Disconnect = async(event)=>{
     if(event){
 
         try{
-            
-            let remove = await DYNAMO.delete({
-                            TableName: 'dev-ws',
+
+            let tableSource = `${ isDev() ? 'dev':'prd' }-ws`,
+                remove = await DYNAMO.delete({
+                            TableName: tableSource,
                             Key: {
                                 connectionId: event.requestContext.connectionId
                             }

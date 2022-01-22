@@ -8,15 +8,15 @@ exports.GetUserDetail = async(params)=>{
 
     try{
         
-        const   tableSource = `${ isDev() ? 'dev':'prd' }-us`,
-                paramsDynamo = {
-                    TableName : tableSource,
-                    IndexName: 'us_enc-index',
-                    KeyConditionExpression: '#encn=:idv',
-                    ExpressionAttributeNames:{ '#encn': 'us_enc' },
-                    ExpressionAttributeValues: { ':idv': params.id },
-                    Limit: 1
-                };
+        let tableSource = `${ isDev() ? 'dev':'prd' }-us`,
+            paramsDynamo = {
+                TableName : tableSource,
+                IndexName: 'us_enc-index',
+                KeyConditionExpression: '#encn=:idv',
+                ExpressionAttributeNames:{ '#encn': 'us_enc' },
+                ExpressionAttributeValues: { ':idv': params.id },
+                Limit: 1
+            };
                 
         var get = await DYNAMO.query(paramsDynamo).promise();
 
