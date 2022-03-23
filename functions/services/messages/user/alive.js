@@ -29,7 +29,7 @@ exports.SetAlive = async function(params=null){
                             online: data?.navigator?.online ? data.navigator.online:'',
                             memory: data?.navigator?.memory ? data.navigator.memory:''
                         },
-                        ttl:new Date().setDate(new Date().getDate() + 2)
+                        ttl:new Date().setDate(new Date().getDate())
                     },
                     ReturnValues:"ALL_OLD"
                 };
